@@ -1,7 +1,7 @@
 import json
 
 # filename = raw_input('Give a file name to analyze: ')
-filename = '201602252025.json' # Change this
+filename = '../data/201602260343.json' # Change this
 
 file = open(filename)
 statuses = []

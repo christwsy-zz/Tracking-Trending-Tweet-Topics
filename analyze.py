@@ -1,5 +1,5 @@
 # STEPS
-# 1. tokenize
+# 1. tokenize 
 # 2. remove stopwords
 # 3. lemma
 # 4. find synonym set, calculate the similarity
@@ -14,25 +14,33 @@ from nltk.tokenize import word_tokenize
 
 noun_tags = ["NN", "NNS", "NNP", "NNPS"]
 
+# Extract the nouns from tweets.
 def extractNouns(tweets):
     nouns = []
     for tweet in tweets:
-        tagged = nltk.pos_tag(word_tokenize(tweet))
-        nouns = [word for word, pos in tagged if pos in noun_tags]
-        nouns.append(' '.join(nouns))
+        tagged = nltk.pos_tag(word_tokenize(tweet)) # find pos tags for each word
+        propernouns = [word for word, pos in tagged if pos in noun_tags]
+        nouns.append(' '.join(propernouns))
     return nouns
 
-def removeStopword(tweets):
+# Removes all the stopwords and those are not actual words from the tweets. 
+def cleanTweets(tweets):
     stopwords = sw.words('english')
     temp = []
     for tweet in tweets:
         querywords = tweet.split()
-        resultwords  = [word for word in querywords if word.lower() not in stopwords]
+        resultwords  = [word.lower() for word in querywords 
+                if word.lower() not in stopwords and wn.synsets(word)] # removes non-word
         result = ' '.join(resultwords)
-        print result
         temp.append(result)
     return temp
-
+    
+def findSynsets(tweet):
+    result = []
+    for word in tweet.split():
+        result.append(wn.synsets(word))
+    return result
+    
 def preprosessing(data):
     raise NotImplementedError
 
@@ -54,16 +62,14 @@ def run():
         else:
             break
     # test
-    status_texts = removeStopword(status_texts)
-    print status_texts
-    print '\n\n'
-    print extractNouns(status_texts)
-    words = word_tokenize(status_texts[2])
-    print nltk.pos_tag(words)
-
-
+    status_texts = cleanTweets(status_texts)
+    # print status_texts
+    # print extractNouns(status_texts)
+    # words = word_tokenize(status_texts[2])
+    s = "car automobile auto motorcar railcar"
+    print findSynsets(s)
+    
 run()
-
 
 # ###### TESTING
 # status_texts = [ status['text'] for status in statuses ]
@@ -74,5 +80,3 @@ run()
 
 # print wn.synsets('computer')
 # print wn.synset('computer.n.01').lemma_names()
-
-
