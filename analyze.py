@@ -1,8 +1,9 @@
 # STEPS
 # 1. tokenize 
 # 2. remove stopwords
-# 3. lemma
-# 4. find synonym set, calculate the similarity
+# 3. lemma (not really necessary)
+# 4. find synonym set (common ancester), # pg69 of NLP with Python
+#     calculate the similarity           # pg71 ..
 
 import json
 import nltk
@@ -37,37 +38,55 @@ def cleanTweets(tweets):
     
 def findSynsets(tweet):
     result = []
-    for word in tweet.split():
+    for word in word_tokenize(tweet):
         result.append(wn.synsets(word))
     return result
     
 def preprosessing(data):
     raise NotImplementedError
+    
+# Test with n-gram
+# def ngram(n):
+# 
 
 def run():
-    filename = '../data/201602260343.json'
+    filename = '../data/201602260343.json' # change here for the data file path
     file = open(filename)
     status_texts = []
-
+    hashtags = []
+    
     i = 0
-    maximum_item = 5 # the maximum number of items to store
+    maximum_item = 500000 # the maximum number of items to store
     
     for line in file:
         if i < maximum_item:
             if 'delete' not in line:
-                status_texts.append(json.loads(line)['text'])
+                tweet = json.loads(line)
+                # store tweet texts
+                status_texts.append(tweet['text'])
+                # store tweet hashtags if it has one
+                if tweet['entities']['hashtags']:
+                    s = tweet['entities']['hashtags'][0]['text']
+                    s = s.encode("ascii", "ignore")
+                    if s: hashtags.append(s.lower())
                 i = i + 1
             else:
                 continue
         else:
             break
-    # test
-    status_texts = cleanTweets(status_texts)
+
+    print len(hashtags)
+    print len(set(hashtags))
+    # status_texts = cleanTweets(status_texts)
     # print status_texts
-    # print extractNouns(status_texts)
+    # nouns = extractNouns(status_texts)
+    # print nouns[0]
+    # for ss in findSynsets(nouns[0]):
+    #     print wn.synset(ss)
+
+    # print ss.hypernym_paths()
     # words = word_tokenize(status_texts[2])
-    s = "car automobile auto motorcar railcar"
-    print findSynsets(s)
+    # print findSynsets(s)
     
 run()
 
@@ -77,6 +96,3 @@ run()
 #                 for user_mention in status['entities']['user_mentions'] ]
 # hashtags = [ hashtag['text'] for status in statuses
 #                 for hashtag in status['entities']['hashtags'] ]
-
-# print wn.synsets('computer')
-# print wn.synset('computer.n.01').lemma_names()
