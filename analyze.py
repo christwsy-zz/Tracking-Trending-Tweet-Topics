@@ -56,7 +56,7 @@ def run():
     hashtags = []
     
     i = 0
-    maximum_item = 500000 # the maximum number of items to store
+    maximum_item = 10000 # the maximum number of items to store
     
     for line in file:
         if i < maximum_item:
@@ -68,15 +68,18 @@ def run():
                 if tweet['entities']['hashtags']:
                     s = tweet['entities']['hashtags'][0]['text']
                     s = s.encode("ascii", "ignore")
-                    if s: hashtags.append(s.lower())
+                    if s: 
+                        hashtags.append(s.lower())
+                        # print tweet['text'].encode("ascii", "ignore")
+                        
                 i = i + 1
             else:
                 continue
         else:
             break
 
-    print len(hashtags)
-    print len(set(hashtags))
+    print hashtags
+    # print len(set(hashtags))
     # status_texts = cleanTweets(status_texts)
     # print status_texts
     # nouns = extractNouns(status_texts)
